@@ -60,14 +60,14 @@ class TestTodo(TodoTest):
 
         response = self.client.get('/api/v1/todos/1')
         self.assertEqual(response.status_code, 200)
-        self.assertDictSubset(TODO_1, response.json)
+        self.assertDictContainsSubset(TODO_1, response.json)
 
     def test_get_item_multiple(self):
         self._populate_records([TODO_1, TODO_2])
 
         response = self.client.get('/api/v1/todos/2')
         self.assertEqual(response.status_code, 200)
-        self.assertDictSubset(TODO_2, response.json)
+        self.assertDictContainsSubset(TODO_2, response.json)
 
     def test_get_todo_not_found(self):
         response = self.client.get('/api/v1/todos/1')
@@ -84,8 +84,8 @@ class TestTodo(TodoTest):
         response = self.client.get('/api/v1/todos')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 2)
-        self.assertDictSubset(TODO_1, response.json[0])
-        self.assertDictSubset(TODO_2, response.json[1])
+        self.assertDictContainsSubset(TODO_1, response.json[0])
+        self.assertDictContainsSubset(TODO_2, response.json[1])
 
     def test_get_items_completed(self):
         self._populate_records([TODO_1, TODO_2])
@@ -93,7 +93,7 @@ class TestTodo(TodoTest):
         response = self.client.get('/api/v1/todos?completed=true')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 1)
-        self.assertDictSubset(TODO_1, response.json[0])
+        self.assertDictContainsSubset(TODO_1, response.json[0])
 
     def test_get_items_window(self):
         self._populate_records([TODO_1, TODO_2, TODO_FUTURE_1, TODO_FUTURE_2])
@@ -101,9 +101,9 @@ class TestTodo(TodoTest):
         response = self.client.get('/api/v1/todos?window=5')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 3)
-        self.assertDictSubset(TODO_1, response.json[0])
-        self.assertDictSubset(TODO_2, response.json[1])
-        self.assertDictSubset(TODO_FUTURE_1, response.json[2])
+        self.assertDictContainsSubset(TODO_1, response.json[0])
+        self.assertDictContainsSubset(TODO_2, response.json[1])
+        self.assertDictContainsSubset(TODO_FUTURE_1, response.json[2])
 
     def test_post_item_success(self):
         todo = TODO_1.copy()
@@ -111,7 +111,7 @@ class TestTodo(TodoTest):
 
         response = self.client.post('/api/v1/todos', json=todo)
         self.assertEqual(response.status_code, 201)
-        self.assertDictSubset(TODO_1, response.json)
+        self.assertDictContainsSubset(TODO_1, response.json)
 
     def test_post_item_missing_title(self):
         todo = TODO_1.copy()
@@ -131,11 +131,11 @@ class TestTodo(TodoTest):
         del todo['id']
         response = self.client.post('/api/v1/todos', json=todo)
         self.assertEqual(response.status_code, 201)
-        self.assertDictSubset(TODO_1, response.json)
+        self.assertDictContainsSubset(TODO_1, response.json)
 
         response = self.client.get('/api/v1/todos/1')
         self.assertEqual(response.status_code, 200)
-        self.assertDictSubset(TODO_1, response.json)
+        self.assertDictContainsSubset(TODO_1, response.json)
 
     def test_post_item_defaults(self):
         todo = TODO_1.copy()
@@ -144,7 +144,7 @@ class TestTodo(TodoTest):
         del todo['id']
         response = self.client.post('/api/v1/todos', json=todo)
         self.assertEqual(response.status_code, 201)
-        self.assertDictSubset(todo, response.json)
+        self.assertDictContainsSubset(todo, response.json)
         self.assertFalse(response.json['completed'])
         self.assertIsNone(response.json['deadline_at'])
 
@@ -154,7 +154,7 @@ class TestTodo(TodoTest):
         todo = {"title": "New Title"}
         response = self.client.put('/api/v1/todos/1', json=todo)
         self.assertEqual(response.status_code, 200)
-        self.assertDictSubset(todo, response.json)
+        self.assertDictContainsSubset(todo, response.json)
 
     def test_put_item_extra_field(self):
         self._populate_records([TODO_1])
@@ -177,7 +177,7 @@ class TestTodo(TodoTest):
 
         response = self.client.get('/api/v1/todos/1')
         self.assertEqual(response.status_code, 200)
-        self.assertDictSubset(TODO_1, response.json)
+        self.assertDictContainsSubset(TODO_1, response.json)
 
     def test_put_item_success_then_get(self):
         self._populate_records([TODO_1])
@@ -185,11 +185,11 @@ class TestTodo(TodoTest):
         todo = {"title": "New Title"}
         response = self.client.put('/api/v1/todos/1', json=todo)
         self.assertEqual(response.status_code, 200)
-        self.assertDictSubset(todo, response.json)
+        self.assertDictContainsSubset(todo, response.json)
 
         response = self.client.get('/api/v1/todos/1')
         self.assertEqual(response.status_code, 200)
-        self.assertDictSubset(todo, response.json)
+        self.assertDictContainsSubset(todo, response.json)
 
     def test_delete_item_success(self):
         self._populate_records([TODO_1])
